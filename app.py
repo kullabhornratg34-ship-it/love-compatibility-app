@@ -4,7 +4,7 @@ import numpy as np
 
 st.set_page_config(page_title="Love Matcher", page_icon="💘", layout="centered")
 
-# 💅 CSS ทำให้เว็บชมพู + ฟ้อนต์แบ๊ว
+# 💅 CSS ธีมชมพู + แก้สีตัวหนังสือแจ้งเตือน
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap');
@@ -36,15 +36,41 @@ st.markdown("""
         height: 3em;
         width: 100%;
         font-size: 18px;
+        border: none;
     }
 
     .stButton>button:hover {
         background-color: #ff1f75;
         color: white;
     }
+
+    /* ===== แก้ปัญหาตัวหนังสือแจ้งเตือนสีขาว ===== */
+
+    /* SUCCESS */
+    div[data-baseweb="notification"][kind="success"] {
+        background-color: #ffe6f2;
+        color: #b30059 !important;
+    }
+
+    /* INFO */
+    div[data-baseweb="notification"][kind="info"] {
+        background-color: #fff0f7;
+        color: #cc0066 !important;
+    }
+
+    /* ERROR */
+    div[data-baseweb="notification"][kind="error"] {
+        background-color: #ffd6e8;
+        color: #99004d !important;
+    }
+
+    div[data-baseweb="notification"] p {
+        color: inherit !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
+# โหลดโมเดล
 model = joblib.load("love_model.pkl")
 
 st.markdown("<h1>💘 LOVE COMPATIBILITY MATCHER 💘</h1>", unsafe_allow_html=True)
