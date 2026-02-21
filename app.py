@@ -2,45 +2,92 @@ import streamlit as st
 import joblib
 import numpy as np
 
+st.set_page_config(page_title="Love Matcher", page_icon="💘")
+
 model = joblib.load("love_model.pkl")
 
-st.title("💘 Love Compatibility Predictor")
+st.markdown(
+    """
+    <h1 style='text-align: center; color: #ff4b6e;'>
+    💘 LOVE COMPATIBILITY MATCHER 💘
+    </h1>
+    """,
+    unsafe_allow_html=True
+)
 
-a_age = st.number_input("อายุคุณ", 18, 60)
-b_age = st.number_input("อายุคนที่คุณชอบ", 18, 60)
+st.markdown("## 👩‍❤️‍👨 กรอกข้อมูลของคุณและคนที่คุณชอบ")
 
-a_open = st.slider("Openness คุณ", 0.0, 1.0, 0.5)
-b_open = st.slider("Openness เขา", 0.0, 1.0, 0.5)
+col1, col2 = st.columns(2)
 
-a_extra = st.slider("Extraversion คุณ", 0.0, 1.0, 0.5)
-b_extra = st.slider("Extraversion เขา", 0.0, 1.0, 0.5)
+# ======================
+# 👤 ฝั่งคุณ
+# ======================
+with col1:
+    st.markdown("### 🌸 คุณ")
+    a_age = st.slider("อายุ", 18, 60, 22)
+    a_openness = st.slider("เปิดรับประสบการณ์ใหม่", 0.0, 1.0, 0.5)
+    a_extraversion = st.slider("ความเป็นคนเปิดเผย", 0.0, 1.0, 0.5)
+    a_agreeableness = st.slider("ความเป็นมิตร", 0.0, 1.0, 0.5)
+    a_conscientiousness = st.slider("ความมีวินัย", 0.0, 1.0, 0.5)
+    a_career = st.slider("ความทะเยอทะยานด้านอาชีพ", 0.0, 1.0, 0.5)
+    a_edu = st.selectbox(
+        "ระดับการศึกษา",
+        [1,2,3,4],
+        format_func=lambda x: {
+            1:"มัธยมศึกษา",
+            2:"ปวช./ปวส.",
+            3:"ปริญญาตรี",
+            4:"ปริญญาโทขึ้นไป"
+        }[x]
+    )
 
-a_agree = st.slider("Agreeableness คุณ", 0.0, 1.0, 0.5)
-b_agree = st.slider("Agreeableness เขา", 0.0, 1.0, 0.5)
+# ======================
+# 💖 ฝั่งเขา
+# ======================
+with col2:
+    st.markdown("### 💖 คนที่คุณชอบ")
+    b_age = st.slider("อายุ ", 18, 60, 22)
+    b_openness = st.slider("เปิดรับประสบการณ์ใหม่ ", 0.0, 1.0, 0.5)
+    b_extraversion = st.slider("ความเป็นคนเปิดเผย ", 0.0, 1.0, 0.5)
+    b_agreeableness = st.slider("ความเป็นมิตร ", 0.0, 1.0, 0.5)
+    b_conscientiousness = st.slider("ความมีวินัย ", 0.0, 1.0, 0.5)
+    b_career = st.slider("ความทะเยอทะยานด้านอาชีพ ", 0.0, 1.0, 0.5)
+    b_edu = st.selectbox(
+        "ระดับการศึกษา ",
+        [1,2,3,4],
+        format_func=lambda x: {
+            1:"มัธยมศึกษา",
+            2:"ปวช./ปวส.",
+            3:"ปริญญาตรี",
+            4:"ปริญญาโทขึ้นไป"
+        }[x]
+    )
 
-a_con = st.slider("Conscientiousness คุณ", 0.0, 1.0, 0.5)
-b_con = st.slider("Conscientiousness เขา", 0.0, 1.0, 0.5)
+# ======================
+# ปุ่มวิเคราะห์
+# ======================
 
-a_amb = st.slider("Career Ambition คุณ", 0.0, 1.0, 0.5)
-b_amb = st.slider("Career Ambition เขา", 0.0, 1.0, 0.5)
+st.markdown("---")
 
-a_edu = st.selectbox("การศึกษา คุณ", [1,2,3,4,5])
-b_edu = st.selectbox("การศึกษา เขา", [1,2,3,4,5])
-
-if st.button("ทำนาย ❤️"):
-    data = np.array([[a_age,b_age,
-                      a_open,b_open,
-                      a_extra,b_extra,
-                      a_agree,b_agree,
-                      a_con,b_con,
-                      a_amb,b_amb,
-                      a_edu,b_edu]])
+if st.button("💘 วิเคราะห์ความรักเลยยย"):
+    input_data = np.array([[a_age,b_age,
+                            a_openness,b_openness,
+                            a_extraversion,b_extraversion,
+                            a_agreeableness,b_agreeableness,
+                            a_conscientiousness,b_conscientiousness,
+                            a_career,b_career,
+                            a_edu,b_edu]])
     
-    prediction = model.predict(data)
-    prob = model.predict_proba(data)
-    
-    if prediction[0] == 1:
-        st.success(f"💖 เข้ากันได้! ({prob[0][1]*100:.2f}%)")
+    prediction = model.predict(input_data)[0]
+    probability = model.predict_proba(input_data)[0][1]
+
+    st.markdown(f"## 💫 ความน่าจะเป็นที่เข้ากันได้: {probability*100:.2f}%")
+
+    if probability >= 0.7:
         st.balloons()
+        st.success("💖 โอ๊ยยย คู่นี้เคมีแรงมากคุณแม่! นี่แฟนค่ะ ไม่ใช่เพื่อนแล้ว 😍")
+    elif probability >= 0.4:
+        st.info("✨ มีลุ้นนะคู่นี้ ถ้าปรับตัวกันอีกนิด อาจจะไปได้ไกล 💕")
     else:
-        st.error(f"💔 อาจจะยังไม่เข้ากัน ({prob[0][1]*100:.2f}%)")
+        st.snow()
+        st.error("😭 ยังไม่ค่อยเข้ากันเท่าไร แต่ความรักพัฒนาได้จ่ะ ไปกันต่อคุณแม่!")
