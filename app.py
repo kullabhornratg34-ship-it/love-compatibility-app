@@ -4,7 +4,7 @@ import numpy as np
 
 st.set_page_config(page_title="Love Matcher", page_icon="💘", layout="centered")
 
-# ===== โหลดโมเดลแบบปลอดภัย =====
+# ===== โหลดโมเดล =====
 saved = joblib.load("love_model.pkl")
 model = saved["model"]
 features = saved["features"]
@@ -71,7 +71,6 @@ st.markdown("---")
 if st.button("💘 วิเคราะห์ความรักเลยยย"):
 
     # ===== Feature Engineering =====
-
     age_gap = abs(a_age - b_age)
 
     personality_similarity = 1 - np.mean([
@@ -93,8 +92,7 @@ if st.button("💘 วิเคราะห์ความรักเลยย�
 
     education_gap = abs(a_edu - b_edu)
 
-    # ===== Build input ตามลำดับ features ตอน train =====
-
+    # ===== Build input =====
     input_dict = {
         "age_gap": age_gap,
         "personality_similarity": personality_similarity,
@@ -108,8 +106,8 @@ if st.button("💘 วิเคราะห์ความรักเลยย�
 
     input_data = np.array([[input_dict[f] for f in features]])
 
-    probability = model.predict_proba(input_data)[0][1]
-
+    # 🔥 ใช้ predict แทน predict_proba
+    prediction = model.predict(input_data)[0]
 
     st.markdown("## 💫 ผลการวิเคราะห์")
 
@@ -118,4 +116,4 @@ if st.button("💘 วิเคราะห์ความรักเลยย�
         st.success("💖 ยินดีด้วย คุณเข้ากันได้!")
     else:
         st.snow()
-        st.error("❌ อาจจะยังไม่เข้ากันนะคุนแม่ แต่ความรักพัฒนาได้เสมอ")
+        st.error("❌ อาจจะยังไม่เข้ากัน แต่ความรักพัฒนาได้เสมอ")
